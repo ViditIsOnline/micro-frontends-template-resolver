@@ -14,31 +14,37 @@ const pageRenderer = async (req, res, next) => {
   const pageName = req.path.split("/")[1];
 
   if (templateRegistry[pageName]) {
-    const $ = cheerio.load(
+    const { modules } = JSON.parse(
       fs.readFileSync(
-        path.resolve(__dirname, "../templates/", templateRegistry[pageName])
+        path.resolve(
+          __dirname,
+          "../moduleData/",
+          `${templateRegistry[pageName]}.json`
+        )
       )
     );
 
+    const $ = cheerio.load(
+      fs.readFileSync(path.resolve(__dirname, "../templates/", "index.html"))
+    );
+
     const modulesPromiseList = [];
+    const root = $("#root");
 
-    $("[data-module]").each((index, element) => {
-      const $element = $(element);
-      const moduleName = $element.attr("data-module");
-
+    modules.forEach(element => {
+      const { endPoint, moduleName } = element;
       modulesPromiseList.push(
         fetch(
           MODULE_RESOLVER_ENDPOINT + "/" + moduleName,
           {
             method: "POST",
             body: JSON.stringify({
-              api: $element.attr("data-api") || ""
+              api: endPoint || ""
             }),
             headers: { "Content-Type": "application/json" }
           },
           content => {
-            $element.html(content.html);
-
+            root.append($("<div>").html(content.html));
             content.css.forEach(function(link) {
               createStyleTag(link, $);
             });
