@@ -28,11 +28,11 @@ const pageRenderer = async (req, res, next) => {
       fs.readFileSync(path.resolve(__dirname, "../templates/", "index.html"))
     );
 
-    const modulesPromiseList = [],
-      root = $("#root");
+    const modulesPromiseList = [];
+    const root = $("#root");
 
     modules.forEach(element => {
-      let { endPoint, moduleName } = element;
+      const { endPoint, moduleName } = element;
       modulesPromiseList.push(
         fetch(
           MODULE_RESOLVER_ENDPOINT + "/" + moduleName,
