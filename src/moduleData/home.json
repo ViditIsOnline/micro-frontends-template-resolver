@@ -1,0 +1,6 @@
+{
+  "modules": [
+    { "name": "TodoList", "endPoint": "/todoList" },
+    { "name": "AddTodo", "endPoint": "" }
+  ]
+}
